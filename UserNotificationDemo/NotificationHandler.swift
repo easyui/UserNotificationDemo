@@ -54,6 +54,7 @@ enum SaySomethingCategoryAction: String {
 }
 
 enum CustomizeUICategoryAction: String {
+    case input
     case `switch`
     case open
     case dismiss
@@ -87,8 +88,9 @@ class NotificationHandler: NSObject, UNUserNotificationCenterDelegate {
         case .media:
             options = [.alert, .sound]
         default:
-            options = []
+            options = [.alert, .sound]
         }
+
         completionHandler(options)
     }
     
@@ -105,7 +107,9 @@ class NotificationHandler: NSObject, UNUserNotificationCenterDelegate {
         }
         completionHandler()
     }
-    
+    /*
+     
+     */
     private func handleSaySomthing(response: UNNotificationResponse) {
         let text: String
         

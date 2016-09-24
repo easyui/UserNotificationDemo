@@ -61,6 +61,7 @@ class AuthorizationViewController: UIViewController {
     }
     
     @objc private func updateNotificationToken(notification: Notification) {
+        self.updateSettings()
         let tokenKey = Notification.Key.AppDidReceivedRemoteNotificationDeviceTokenKey
         self.deviceToken = notification.userInfo?[tokenKey] as? String
     }
@@ -68,13 +69,17 @@ class AuthorizationViewController: UIViewController {
     private func updateUI() {
         deviceTokenLabel.text = deviceToken
         
-        guard let settings = settings else {
+        guard let settings = settings ,settings.authorizationStatus == .authorized else {
             settingsView.isHidden = true
             return
         }
         
         settingsView.isHidden = false
-        notificationCenterSettingLabel.text = settings.notificationCenterSetting.description
+        if #available(iOS 10.0, *) {
+            notificationCenterSettingLabel.text = settings.notificationCenterSetting.description
+        } else {
+            // Fallback on earlier versions
+        }
         soundSettingLabel.text = settings.soundSetting.description
         badgeSettingLabel.text = settings.badgeSetting.description
         lockScreenSettingLabel.text = settings.lockScreenSetting.description
@@ -84,19 +89,24 @@ class AuthorizationViewController: UIViewController {
     }
 
     @IBAction func requestButtonPressed(_ sender: AnyObject) {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-            granted, error in
-            if granted {
-                UIApplication.shared.registerForRemoteNotifications()
-            } else {
-                if let error = error {
-                    UIAlertController.showConfirmAlert(message: error.localizedDescription, in: self)
+        if #available(iOS 10.0, *) {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .carPlay]) {
+                granted, error in
+                if granted {
+                    UIApplication.shared.registerForRemoteNotifications()
+                } else {
+                    if let error = error {
+                        UIAlertController.showConfirmAlert(message: error.localizedDescription, in: self)
+                    }
                 }
             }
+        } else {
+            // Fallback on earlier versions
         }
     }
 }
 
+@available(iOS 10.0, *)
 extension UNNotificationSetting: CustomStringConvertible {
     public var description: String {
         switch self {
@@ -107,6 +117,7 @@ extension UNNotificationSetting: CustomStringConvertible {
     }
 }
 
+@available(iOS 10.0, *)
 extension UNAlertStyle: CustomStringConvertible {
     public var description: String {
         switch self {

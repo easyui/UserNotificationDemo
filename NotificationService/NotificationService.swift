@@ -8,6 +8,7 @@
 
 import UserNotifications
 
+@available(iOSApplicationExtension 10.0, *)
 class NotificationService: UNNotificationServiceExtension {
 
     var contentHandler: ((UNNotificationContent) -> Void)?
@@ -48,7 +49,7 @@ class NotificationService: UNNotificationServiceExtension {
                 contentHandler(bestAttemptContent)
                 
             } else if request.identifier == "media" {
-                
+                 
                 if let imageURLString = bestAttemptContent.userInfo["image"] as? String,
                    let URL = URL(string: imageURLString)
                 {

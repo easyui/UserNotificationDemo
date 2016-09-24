@@ -15,7 +15,7 @@ struct NotificationPresentItem {
     let title: String
     let text: String
 }
-
+@available(iOSApplicationExtension 10.0, *)
 class NotificationViewController: UIViewController, UNNotificationContentExtension {
     
     var items: [NotificationPresentItem] = []
@@ -82,6 +82,11 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
             completion(.dismissAndForwardAction)
         } else if response.actionIdentifier == "dismiss" {
             completion(.dismiss)
+        }else if response.actionIdentifier == "input" {
+            becomeFirstResponder()//这里做了2件事情，一是告诉responder chain，我成为了第一响应者，
+//            textField.becomeFirstResponder()//二是告诉iOS系统，我不想使用系统标准的text field。接着就可以创建自定义化的inputAccessoryView。
+            completion(.dismissAndForwardAction)
+
         } else {
             completion(.dismissAndForwardAction)
         }

@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         registerNotificationCategory()
         UNUserNotificationCenter.current().delegate = notificationHandler
+        print( UserDefaults.standard.object(forKey: "push-token") as? String)
         return true
     }
 
@@ -80,6 +81,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }()
         
         let customUICategory: UNNotificationCategory = {
+            let inputAction = UNTextInputNotificationAction(
+                identifier: CustomizeUICategoryAction.input.rawValue,
+                title: "Input",
+                options: [.foreground],
+                textInputButtonTitle: "Send",
+                textInputPlaceholder: "What do you want to say...")
+            
             let nextAction = UNNotificationAction(
                 identifier: CustomizeUICategoryAction.switch.rawValue,
                 title: "Switch",
@@ -92,7 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 identifier: CustomizeUICategoryAction.dismiss.rawValue,
                 title: "Dismiss",
                 options: [.destructive])
-            return UNNotificationCategory(identifier: UserNotificationCategoryType.customUI.rawValue, actions: [nextAction, openAction, dismissAction], intentIdentifiers: [], options: [])
+            return UNNotificationCategory(identifier: UserNotificationCategoryType.customUI.rawValue, actions: [inputAction,nextAction, openAction, dismissAction], intentIdentifiers: [], options: [])
         }()
         
         UNUserNotificationCenter.current().setNotificationCategories([saySomethingCategory, customUICategory])

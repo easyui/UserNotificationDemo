@@ -9,6 +9,7 @@
 import UIKit
 import UserNotifications
 
+@available(iOS 10.0, *)
 class ManagementViewController: UIViewController {
 
     let title1Content: UNNotificationContent = {
